@@ -1,7 +1,7 @@
 """
-Segmentation Training Script - TerraSeg v2
+Segmentation Training Script - TerraSeg v3
 Trains a segmentation head on top of DINOv2 backbone
-Optimized with AdamW and ColorJitter Augmentation
+Optimized with AdamW (lr=1e-3) and Cosine Annealing LR Scheduler
 """
 
 import torch
@@ -11,6 +11,7 @@ from torch import nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
 import torchvision.transforms as transforms
 from PIL import Image
 import cv2
@@ -233,20 +234,17 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    # --- UPDATED HYPERPARAMETERS ---
     batch_size = 8
     n_epochs = 20
-    lr = 1e-4
+    lr = 1e-3
     w, h = 476, 266 # Optimized for DINOv2 14x14 patches
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_dir = os.path.join(script_dir, 'train_stats')
     os.makedirs(output_dir, exist_ok=True)
 
-    # --- UPDATED TRANSFORMS (COLOR JITTER) ---
     transform = transforms.Compose([
         transforms.Resize((h, w)),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2), 
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
@@ -280,11 +278,11 @@ def main():
     classifier = SegmentationHeadConvNeXt(in_channels=n_embedding, out_channels=n_classes, 
                                           tokenW=w // 14, tokenH=h // 14).to(device)
 
-    # --- UPDATED OPTIMIZER (ADAMW) ---
     loss_fct = torch.nn.CrossEntropyLoss()
     optimizer = optim.AdamW(classifier.parameters(), lr=lr, weight_decay=1e-4)
+    scheduler = CosineAnnealingLR(optimizer, T_max=n_epochs, eta_min=1e-6)
 
-    history = {k: [] for k in ['train_loss', 'val_loss', 'train_iou', 'val_iou', 
+    history = {k: [] for k in ['train_loss', 'val_loss', 'train_iou', 'val_iou',
                                'train_dice', 'val_dice', 'train_pixel_acc', 'val_pixel_acc']}
 
     print("\nStarting Training (TerraSeg v2)...")
@@ -294,15 +292,14 @@ def main():
         train_losses = []
         for imgs, labels in tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False):
             imgs, labels = imgs.to(device), labels.to(device)
+            optimizer.zero_grad()
             with torch.no_grad():
                 feat = backbone_model.forward_features(imgs)["x_norm_patchtokens"]
             logits = classifier(feat)
             preds = F.interpolate(logits, size=imgs.shape[2:], mode="bilinear", align_corners=False)
             loss = loss_fct(preds, labels.squeeze(1).long())
-            
             loss.backward()
             optimizer.step()
-            optimizer.zero_grad()
             train_losses.append(loss.item())
 
         # Validation
@@ -325,6 +322,7 @@ def main():
         history['train_dice'].append(t_dice); history['val_dice'].append(v_dice)
         history['train_pixel_acc'].append(t_acc); history['val_pixel_acc'].append(v_acc)
 
+        scheduler.step()
         epoch_pbar.set_postfix(val_iou=f"{v_iou:.3f}", val_acc=f"{v_acc:.3f}")
 
     save_training_plots(history, output_dir)
