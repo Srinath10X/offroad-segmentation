@@ -95,20 +95,13 @@ make visualize
 
 Our model evaluates pixel-level classifications against the digital-twin ground truth. Below are comparative visualizations of the input, ground truth, and predicted segmentation on unseen data.
 
-*(Insert comparison visualizations here from docs/assets/sample_0_comparison.png)*
-
 **Sample Prediction 1:**
-![Comparison 1](docs/assets/sample_0_comparison.png)
-
-**Sample Prediction 2:**
-![Comparison 2](docs/assets/sample_1_comparison.png)
+![Comparison 1](.github/assets/sample-2.png)
 
 ### Training Metrics
 The model's performance and generalizability were quantified using the Intersection over Union (IoU) metric across all 10 designated classes.
 
-*(Insert training curves here from docs/assets/all_metrics_curves.png)*
-
-![Metrics Chart](docs/assets/all_metrics_curves.png)
+![Metrics Chart](.github/assets/iou_mean-2.png)
 
 ---
 *Developed by [Team Safaris] for the Hack the Night Hackathon.*
