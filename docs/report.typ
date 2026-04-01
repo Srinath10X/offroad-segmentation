@@ -1,4 +1,4 @@
-#set document(title: "Offroad Semantic Scene Segmentation", author: "Team Saffire")
+#set document(title: "Offroad Semantic Scene Segmentation", author: "Team Safaris")
 
 #set page(
   paper: "a4",
@@ -35,7 +35,7 @@
   #text(size: 12pt, fill: rgb("#444"))[Duality AI · Hack the Night Hackathon]
   #v(0.5cm)
   #text(size: 11pt, fill: rgb("#666"))[
-    Submitted by: *Team TerraSeg* \
+    Submitted by: *Team Safaris* \
     Date: April 2026
   ]
   #v(1.5cm)
