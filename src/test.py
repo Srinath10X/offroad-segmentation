@@ -302,7 +302,8 @@ def main():
     parser = argparse.ArgumentParser(description='Segmentation prediction/inference script')
     parser.add_argument('--model_path', type=str, default=os.path.join(script_dir, 'segmentation_head.pth'),
                         help='Path to trained model weights')
-    parser.add_argument('--data_dir', type=str, default=os.path.join(script_dir, '..', 'Offroad_Segmentation_testImages'),
+    # ---- UPDATED PATH HERE ----
+    parser.add_argument('--data_dir', type=str, default=os.path.join(script_dir, '..', 'data', 'Offroad_Segmentation_testImages'),
                         help='Path to validation dataset')
     parser.add_argument('--output_dir', type=str, default='./predictions',
                         help='Directory to save prediction visualizations')
@@ -484,4 +485,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

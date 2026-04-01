@@ -421,9 +421,9 @@ def main():
         transforms.ToTensor(),
     ])
 
-    # Dataset paths (relative to script location)
-    data_dir = os.path.join(script_dir, '..', 'Offroad_Segmentation_Training_Dataset', 'train')
-    val_dir = os.path.join(script_dir, '..', 'Offroad_Segmentation_Training_Dataset', 'val')
+    # Dataset paths (UPDATED TO POINT TO data/)
+    data_dir = os.path.join(script_dir, '..', 'data', 'Offroad_Segmentation_Training_Dataset', 'train')
+    val_dir = os.path.join(script_dir, '..', 'data', 'Offroad_Segmentation_Training_Dataset', 'val')
 
     # Create datasets
     trainset = MaskDataset(data_dir=data_dir, transform=transform, mask_transform=mask_transform)
@@ -587,4 +587,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
