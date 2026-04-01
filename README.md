@@ -95,13 +95,13 @@ make visualize
 
 Our model evaluates pixel-level classifications against the digital-twin ground truth. Below are comparative visualizations of the input, ground truth, and predicted segmentation on unseen data.
 
-**Sample Prediction 1:**
-![Comparison 1](.github/assets/sample-2.png)
+**Sample Prediction 1 (SGD Optimizer):**
+![Comparison 1](.github/assets/sample.png)
 
 ### Training Metrics
 The model's performance and generalizability were quantified using the Intersection over Union (IoU) metric across all 10 designated classes.
 
-![Metrics Chart](.github/assets/iou_mean-2.png)
+![Metrics Chart](.github/assets/iou_mean.png)
 
 ---
 *Developed by [Team Safaris] for the Hack the Night Hackathon.*
