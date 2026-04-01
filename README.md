@@ -35,28 +35,39 @@ Collecting and manually labeling real-world offroad data presents significant sa
 This project utilizes a `Makefile` to streamline deployment. It can be executed via Google Colab or locally. 
 
 ### Option A: Google Colab (Recommended)
+
 Colab provides pre-configured dependencies and free GPU access. 
 1. Upload this repository to your Google Drive and open a new Colab Notebook in the root directory.
 2. Enable a GPU runtime (`Runtime` > `Change runtime type` > `T4 GPU`).
-3. Run the following commands to configure the environment and fetch the data:
-   ```bash
-   !make setup
-   !make get-data
-   ```
+3. Run the following commands in terminal to configure the environment and fetch the data:
+
+```bash
+rm -rf * # in /content
+git clone https://github.com/TeamSafaris/offroad-segmentation.git .
+
+mv offroad-segmentation/* . && rm -rf offroad-segmentation
+
+make setup
+make get-data
+```
 
 ### Option B: Local Machine Deployment
 If deploying locally, **a virtual environment is strictly required** to prevent dependency conflicts. 
 
 **Using Conda:**
 ```bash
+git clone https://github.com/TeamSafaris/offroad-segmentation.git .
 conda create -n duality_env python=3.10
 conda activate duality_env
-make setup
 make get-data
+make train  # to train
+make test   # to test
 ```
 
 **Using Python Venv:**
 ```bash
+
+git clone https://github.com/TeamSafaris/offroad-segmentation.git .
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 make setup
