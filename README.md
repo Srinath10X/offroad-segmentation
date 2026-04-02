@@ -105,11 +105,16 @@ make visualize
 Our model evaluates pixel-level classifications against the digital-twin ground truth. Below are comparative visualizations of the input, ground truth, and predicted segmentation on unseen data.
 
 **Sample Prediction 1 (SGD Optimizer):**
-![Comparison 1](.github/assets/optimized_class.png)
+![Comparison 2](./.github/assets/sample.png)
+**Sample Prediction 2 (AdamW Optimizer):**
+![Comparison 2](.github/assets/optimized_class.png)
 
 ### Training Metrics
 The model's performance and generalizability were quantified using the Intersection over Union (IoU) metric across all 10 designated classes.
 
+#### Metrics 1 (SGD)
+![Metrics Chart](./.github/assets/iou_mean.png)
+#### Metrics 2 using (AdamW)
 ![Metrics Chart](.github/assets/optimized_bar.png)
 
 ---
