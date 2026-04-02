@@ -22,10 +22,6 @@ import os
 import argparse
 from tqdm import tqdm
 
-# ============================================================================
-# Class config  —  must match train_v3_fast.py exactly
-# ============================================================================
-
 value_map = {
     0:     0,   # Background
     100:   1,   # Trees
@@ -39,14 +35,14 @@ value_map = {
     7100:  9,   # Landscape
     10000: 10,  # Sky
 }
-n_classes = len(value_map)   # 11
+
+n_classes = len(value_map)
 
 CLASS_NAMES = [
     'Background', 'Trees', 'Lush Bushes', 'Dry Grass', 'Dry Bushes',
     'Ground Clutter', 'Flowers', 'Logs', 'Rocks', 'Landscape', 'Sky'
 ]
 
-# 11 colors — one per class
 COLOR_PALETTE = np.array([
     [0,   0,   0  ],  # Background    — black
     [34,  139, 34 ],  # Trees         — forest green
@@ -249,7 +245,6 @@ def main():
 
     W, H = 476, 266   # must match training
 
-    # ── Dataset ──────────────────────────────────────────────────────────────
     has_masks = not args.no_masks
     print(f"Loading dataset from {args.data_dir} (has_masks={has_masks})...")
     dataset = MaskDataset(args.data_dir, W=W, H=H, has_masks=has_masks)
@@ -257,21 +252,18 @@ def main():
                          num_workers=2, pin_memory=True)
     print(f"Loaded {len(dataset)} samples.")
 
-    # ── Backbone ─────────────────────────────────────────────────────────────
     print("Loading DINOv2 backbone (dinov2_vits14)...")
     backbone = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
     backbone.eval().to(device)
     for p in backbone.parameters():
         p.requires_grad_(False)
 
-    # Probe embedding dim
     with torch.no_grad():
         sample, _, _ = dataset[0]
         feat  = backbone.forward_features(sample.unsqueeze(0).to(device))["x_norm_patchtokens"]
     n_emb = feat.shape[2]
     print(f"Embedding dim: {n_emb}")
 
-    # ── Classifier ───────────────────────────────────────────────────────────
     print(f"Loading weights from {args.model_path}...")
     classifier = SegmentationHeadConvNeXt(
         in_channels=n_emb,
@@ -317,22 +309,18 @@ def main():
                 all_class_iou.append(class_iou)
                 pbar.set_postfix(iou=f"{miou:.3f}")
 
-            # Save outputs per image
             for i in range(imgs.shape[0]):
                 fid       = fids[i]
                 base_name = os.path.splitext(fid)[0]
                 pred_np   = pred_masks[i].cpu().numpy().astype(np.uint8)
 
-                # Raw class-ID mask
                 Image.fromarray(pred_np).save(
                     os.path.join(masks_dir, f'{base_name}_pred.png'))
 
-                # Coloured mask
                 cv2.imwrite(
                     os.path.join(masks_color_dir, f'{base_name}_pred_color.png'),
                     cv2.cvtColor(mask_to_color(pred_np), cv2.COLOR_RGB2BGR))
 
-                # Comparison (first N samples, only if we have GT)
                 if has_masks and sample_count < args.num_samples:
                     save_comparison(
                         imgs[i], masks[i], pred_masks[i],
@@ -342,7 +330,6 @@ def main():
                     )
                 sample_count += 1
 
-    # ── Summary ───────────────────────────────────────────────────────────────
     if has_masks:
         mean_iou      = float(np.nanmean(iou_scores))
         mean_acc      = float(np.mean(pixel_accs))

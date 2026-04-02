@@ -42,9 +42,7 @@ Colab provides pre-configured dependencies and free GPU access.
 3. Run the following commands in terminal to configure the environment and fetch the data:
 
 ```bash
-rm -rf * # in /content
-git clone https://github.com/TeamSafaris/offroad-segmentation.git .
-
+git clone https://github.com/TeamSafaris/offroad-segmentation.git
 mv offroad-segmentation/* . && rm -rf offroad-segmentation
 
 make setup
