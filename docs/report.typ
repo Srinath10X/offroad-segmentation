@@ -121,11 +121,11 @@ The impact of our data-centric fixes is immediately visible in the per-class IoU
     columns: (1fr, 1fr),
     gutter: 1em,
     figure(
-      image("../.github/assets/optimized_bar.png", width: 100%),
+      image("../.github/assets/iou_mean.png", width: 100%),
       caption: [*Baseline (v2)*: Rare classes suppressed (mIoU 0.2378)]
     ),
     figure(
-      image("../.github/assets/iou_mean.png", width: 100%),
+      image("../.github/assets/optimized_bar.png", width: 100%),
       caption: [*TerraSeg v3*: Long-tail classes unlocked (mIoU 0.49+)]
     )
   )
